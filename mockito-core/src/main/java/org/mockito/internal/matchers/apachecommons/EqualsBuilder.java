@@ -4,6 +4,7 @@
  */
 package org.mockito.internal.matchers.apachecommons;
 
+import org.mockito.CoverageMeasurement;
 import org.mockito.internal.configuration.plugins.Plugins;
 import org.mockito.plugins.MemberAccessor;
 
@@ -339,47 +340,67 @@ class EqualsBuilder {
      * @return EqualsBuilder - used to chain calls.
      */
     public EqualsBuilder append(Object lhs, Object rhs) {
+        CoverageMeasurement measurement = new CoverageMeasurement("EqualsBuilder::append", 19);
         if (!isEquals) {
+            measurement.branch(0);
             return this;
         }
+        measurement.branch(1);
         if (lhs == rhs) {
+            measurement.branch(2);
             return this;
         }
+        measurement.branch(3);
         if (lhs == null || rhs == null) {
+            measurement.branch(4);
             this.setEquals(false);
             return this;
         }
+        measurement.branch(5);
         Class<?> lhsClass = lhs.getClass();
         if (!lhsClass.isArray()) {
+            measurement.branch(6);
             if (lhs instanceof BigDecimal && rhs instanceof BigDecimal) {
+                measurement.branch(7);
                 isEquals = (((BigDecimal) lhs).compareTo((BigDecimal) rhs) == 0);
             } else {
+                measurement.branch(8);
                 // The simple case, not an array, just test the element
                 isEquals = lhs.equals(rhs);
             }
         } else if (lhs.getClass() != rhs.getClass()) {
+            measurement.branch(9);
             // Here when we compare different dimensions, for example: a boolean[][] to a boolean[]
             this.setEquals(false);
 
             // 'Switch' on type of array, to dispatch to the correct handler
             // This handles multi dimensional arrays of the same depth
         } else if (lhs instanceof long[]) {
+            measurement.branch(10);
             append((long[]) lhs, (long[]) rhs);
         } else if (lhs instanceof int[]) {
+            measurement.branch(11);
             append((int[]) lhs, (int[]) rhs);
         } else if (lhs instanceof short[]) {
+            measurement.branch(12);
             append((short[]) lhs, (short[]) rhs);
         } else if (lhs instanceof char[]) {
+            measurement.branch(13);
             append((char[]) lhs, (char[]) rhs);
         } else if (lhs instanceof byte[]) {
+            measurement.branch(14);
             append((byte[]) lhs, (byte[]) rhs);
         } else if (lhs instanceof double[]) {
+            measurement.branch(15);
             append((double[]) lhs, (double[]) rhs);
         } else if (lhs instanceof float[]) {
+            measurement.branch(16);
             append((float[]) lhs, (float[]) rhs);
         } else if (lhs instanceof boolean[]) {
+            measurement.branch(17);
             append((boolean[]) lhs, (boolean[]) rhs);
         } else {
+            measurement.branch(18);
             // Not an array of primitives
             append((Object[]) lhs, (Object[]) rhs);
         }

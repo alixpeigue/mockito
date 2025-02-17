@@ -31,3 +31,6 @@ classes
 # Used to check reproducibility of Mockito jars
 checksums/
 /.tool-versions
+
+# Coverage reports
+*.cov

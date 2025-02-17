@@ -4,6 +4,7 @@
  */
 package org.mockito.internal.creation.bytebuddy;
 
+import org.mockito.CoverageMeasurement;
 import org.mockito.MockedConstruction;
 import org.mockito.creation.instance.InstantiationException;
 import org.mockito.creation.instance.Instantiator;
@@ -215,18 +216,26 @@ class InlineDelegateByteBuddyMockMaker
     private final ThreadLocal<Object> currentSpied = new ThreadLocal<>();
 
     InlineDelegateByteBuddyMockMaker() {
+        CoverageMeasurement measurement =
+                new CoverageMeasurement(
+                        "InlineDelegateByteBuddyMockMaker::InlineDelegateByteBuddyMockMaker", 22);
+
         if (INITIALIZATION_ERROR != null) {
+            measurement.branch(1);
             String detail;
             if (PlatformUtils.isAndroidPlatform() || PlatformUtils.isProbablyTermuxEnvironment()) {
+                measurement.branch(2);
                 detail =
                         "It appears as if you are trying to run this mock maker on Android which does not support the instrumentation API.";
             } else {
+                measurement.branch(3);
                 try {
                     if (INITIALIZATION_ERROR instanceof NoClassDefFoundError
                             && INITIALIZATION_ERROR.getMessage() != null
                             && INITIALIZATION_ERROR
                                     .getMessage()
                                     .startsWith("net/bytebuddy/agent/")) {
+                        measurement.branch(4);
                         detail =
                                 join(
                                         "It seems like you are running Mockito with an incomplete or inconsistent class path. Byte Buddy Agent could not be loaded.",
@@ -237,13 +246,16 @@ class InlineDelegateByteBuddyMockMaker
                                     .getMethod("getSystemJavaCompiler")
                                     .invoke(null)
                             == null) {
+                        measurement.branch(5);
                         detail =
                                 "It appears as if you are running on a JRE. Either install a JDK or add JNA to the class path.";
                     } else {
+                        measurement.branch(6);
                         detail =
                                 "It appears as if your JDK does not supply a working agent attachment mechanism.";
                     }
                 } catch (Throwable ignored) {
+                    measurement.branch(7);
                     detail =
                             "It appears as if you are running an incomplete JVM installation that might not support all tooling APIs";
                 }
@@ -255,6 +267,8 @@ class InlineDelegateByteBuddyMockMaker
                             detail,
                             Platform.describe()),
                     INITIALIZATION_ERROR);
+        } else {
+            measurement.branch(0);
         }
 
         ThreadLocal<Class<?>> currentConstruction = new ThreadLocal<>();
@@ -263,34 +277,43 @@ class InlineDelegateByteBuddyMockMaker
         Predicate<Class<?>> isMockConstruction =
                 type -> {
                     if (isSuspended.get()) {
+                        measurement.branch(8);
                         return false;
                     } else if ((currentMocking.get() != null
                                     && type.isAssignableFrom(currentMocking.get()))
                             || currentConstruction.get() != null) {
+                        measurement.branch(9);
                         return true;
                     }
                     Map<Class<?>, ?> interceptors = mockedConstruction.get();
                     if (interceptors != null && interceptors.containsKey(type)) {
+                        measurement.branch(10);
                         // We only initiate a construction mock, if the call originates from an
                         // un-mocked (as suppression is not enabled) subclass constructor.
                         if (isCallFromSubclassConstructor.test(type)) {
+                            measurement.branch(11);
                             return false;
                         }
                         currentConstruction.set(type);
                         return true;
                     } else {
+                        measurement.branch(12);
                         return false;
                     }
                 };
         ConstructionCallback onConstruction =
                 (type, object, arguments, parameterTypeNames) -> {
                     if (currentMocking.get() != null) {
+                        measurement.branch(13);
                         Object spy = currentSpied.get();
                         if (spy == null) {
+                            measurement.branch(14);
                             return null;
                         } else if (type.isInstance(spy)) {
+                            measurement.branch(15);
                             return spy;
                         } else {
+                            measurement.branch(16);
                             isSuspended.set(true);
                             try {
                                 // Unexpected construction of non-spied object
@@ -305,7 +328,10 @@ class InlineDelegateByteBuddyMockMaker
                             }
                         }
                     } else if (currentConstruction.get() != type) {
+                        measurement.branch(17);
                         return null;
+                    } else {
+                        measurement.branch(18);
                     }
                     currentConstruction.remove();
                     isSuspended.set(true);
@@ -313,14 +339,20 @@ class InlineDelegateByteBuddyMockMaker
                         Map<Class<?>, BiConsumer<Object, MockedConstruction.Context>> interceptors =
                                 mockedConstruction.get();
                         if (interceptors != null) {
+                            measurement.branch(18);
                             BiConsumer<Object, MockedConstruction.Context> interceptor =
                                     interceptors.get(type);
                             if (interceptor != null) {
+                                measurement.branch(19);
                                 interceptor.accept(
                                         object,
                                         new InlineConstructionMockContext(
                                                 arguments, object.getClass(), parameterTypeNames));
+                            } else {
+                                measurement.branch(20);
                             }
+                        } else {
+                            measurement.branch(21);
                         }
                     } finally {
                         isSuspended.set(false);
