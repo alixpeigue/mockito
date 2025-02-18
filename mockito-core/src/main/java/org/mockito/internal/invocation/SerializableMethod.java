@@ -99,40 +99,68 @@ public class SerializableMethod implements Serializable, MockitoMethod {
 
     @Override
     public boolean equals(Object obj) {
+        // If the two SerializableMethods refer to the same object, then they are equal
         if (this == obj) {
             return true;
         }
+        // No SerializableMethod is equal to null
         if (obj == null) {
             return false;
         }
+        // A SerializableMethod (or any ob its subtypes) can only be equal of an object of exactly
+        // the same type
         if (getClass() != obj.getClass()) {
             return false;
         }
         SerializableMethod other = (SerializableMethod) obj;
+
+        // The two SerializableMethod must have equal (possibly both null) declaring classes to be
+        // equal
         if (declaringClass == null) {
+            // Note : unattainable code, a Method cannot have a null declaringClass
             if (other.declaringClass != null) {
                 return false;
             }
         } else if (!declaringClass.equals(other.declaringClass)) {
             return false;
         }
+
+        // The two SerializableMethod must have equal (possibly both null) method names to be equal
         if (methodName == null) {
+            // Note : unattainable code, a method cannot have a null methodName
             if (other.methodName != null) {
                 return false;
             }
         } else if (!methodName.equals(other.methodName)) {
             return false;
         }
+
+        // the two SerializableMethod must have equal element by element parameter types arrays to
+        // be equal
         if (!Arrays.equals(parameterTypes, other.parameterTypes)) {
             return false;
         }
+
+        // The two SerializableMethod must have equal (possibly both null) return types to be equal
         if (returnType == null) {
+            // Note : unattainable code, a method cannot have a null returnType
             if (other.returnType != null) {
                 return false;
             }
         } else if (!returnType.equals(other.returnType)) {
+            // Note: unattainable code
+            // methods already have the same name and same parameter types and same declaring class
+            // so they cannot have different return type because having method differ only by their
+            // return type is illegal in java :
+            // class ClassName {
+            //     void method() {}
+            //     int method() {]
+            // }
+            // is illegal.
             return false;
         }
+
+        // If all conditions are met, serializable methods are equal
         return true;
     }
 }
