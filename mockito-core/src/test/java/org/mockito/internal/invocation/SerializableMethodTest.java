@@ -69,6 +69,32 @@ public class SerializableMethodTest extends TestBase {
         assertFalse(new SerializableMethod(testBaseToStringMethod).equals(method));
     }
 
-    // TODO: add tests for generated equals() method
+    @Test
+    public void shouldNotBeEqualToNull() throws Exception {
+        assertFalse(method.equals(null));
+    }
 
+    @Test
+    public void shouldNotBeEqualToOtherType() throws Exception {
+        assertFalse(method.equals(new Object()));
+    }
+
+    @Test
+    public void shouldNotBeEqualForDifferentMethodNamesFromSameClassAndSameArguments()
+            throws Exception {
+        Method testBaseGetClassMethod = this.getClass().getMethod("getClass", args);
+        assertFalse(new SerializableMethod(testBaseGetClassMethod).equals(method));
+    }
+
+    @Test
+    public void shouldNotBeEqualForSameMethodWithDifferentArguments() throws Exception {
+        class TestClass {
+            public void method(int param) {}
+
+            public void method() {}
+        }
+        Method method1 = TestClass.class.getMethod("method", int.class);
+        Method method2 = TestClass.class.getMethod("method");
+        assertFalse(new SerializableMethod(method1).equals(new SerializableMethod(method2)));
+    }
 }
