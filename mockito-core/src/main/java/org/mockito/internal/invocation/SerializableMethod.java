@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
+import org.mockito.CoverageMeasurement;
 import org.mockito.exceptions.base.MockitoException;
 import org.mockito.internal.creation.SuspendMethod;
 
@@ -99,40 +100,64 @@ public class SerializableMethod implements Serializable, MockitoMethod {
 
     @Override
     public boolean equals(Object obj) {
+        CoverageMeasurement measurement = new CoverageMeasurement("SerializableMethod::equals", 23);
         if (this == obj) {
+            measurement.branch(0);
             return true;
         }
+        measurement.branch(1);
         if (obj == null) {
+            measurement.branch(2);
             return false;
         }
+        measurement.branch(3);
         if (getClass() != obj.getClass()) {
+            measurement.branch(4);
             return false;
         }
+        measurement.branch(5);
         SerializableMethod other = (SerializableMethod) obj;
         if (declaringClass == null) {
+            measurement.branch(6);
             if (other.declaringClass != null) {
+                measurement.branch(7);
                 return false;
             }
+            measurement.branch(8);
         } else if (!declaringClass.equals(other.declaringClass)) {
+            measurement.branch(9);
             return false;
         }
+        measurement.branch(10);
         if (methodName == null) {
+            measurement.branch(11);
             if (other.methodName != null) {
+                measurement.branch(12);
                 return false;
             }
+            measurement.branch(13);
         } else if (!methodName.equals(other.methodName)) {
+            measurement.branch(14);
             return false;
         }
+        measurement.branch(15);
         if (!Arrays.equals(parameterTypes, other.parameterTypes)) {
+            measurement.branch(16);
             return false;
         }
+        measurement.branch(17);
         if (returnType == null) {
+            measurement.branch(18);
             if (other.returnType != null) {
+                measurement.branch(19);
                 return false;
             }
+            measurement.branch(20);
         } else if (!returnType.equals(other.returnType)) {
+            measurement.branch(21);
             return false;
         }
+        measurement.branch(22);
         return true;
     }
 }

@@ -4,6 +4,7 @@
  */
 package org.mockito.internal.matchers.text;
 
+import org.mockito.CoverageMeasurement;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,34 +22,54 @@ public class ValuePrinter {
      * Handles explosive toString() implementations.
      */
     public static String print(final Object value) {
+        CoverageMeasurement measurement = new CoverageMeasurement("ValuePrinter::print", 22);
         if (value == null) {
+            measurement.branch(0);
             return "null";
         }
+        measurement.branch(1);
         if (value instanceof String) {
+            measurement.branch(2);
             return '"' + value.toString() + '"';
         }
+        measurement.branch(3);
         if (value instanceof Character) {
+            measurement.branch(4);
             return printChar((Character) value);
         }
+        measurement.branch(5);
         if (value instanceof Long) {
+            measurement.branch(6);
             return value + "L";
         }
+        measurement.branch(7);
         if (value instanceof Double) {
+            measurement.branch(8);
             return value + "d";
         }
+        measurement.branch(9);
         if (value instanceof Float) {
+            measurement.branch(10);
             return value + "f";
         }
+        measurement.branch(11);
         if (value instanceof Short) {
+            measurement.branch(12);
             return "(short) " + value;
         }
+        measurement.branch(13);
         if (value instanceof Byte) {
+            measurement.branch(14);
             return String.format("(byte) 0x%02X", (Byte) value);
         }
+        measurement.branch(15);
         if (value instanceof Map) {
+            measurement.branch(16);
             return printMap((Map<?, ?>) value);
         }
+        measurement.branch(17);
         if (value.getClass().isArray()) {
+            measurement.branch(18);
             return printValues(
                     "[",
                     ", ",
@@ -71,9 +92,12 @@ public class ValuePrinter {
                         }
                     });
         }
+        measurement.branch(19);
         if (value instanceof FormattedText) {
+            measurement.branch(20);
             return (((FormattedText) value).getText());
         }
+        measurement.branch(21);
 
         return descriptionOf(value);
     }
