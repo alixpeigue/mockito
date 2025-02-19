@@ -7,12 +7,23 @@ package org.mockito.internal.matchers.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.internal.matchers.text.ValuePrinter.print;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.Test;
 
 public class ValuePrinterTest {
+
+    @Test
+    public void printValues_test() {
+
+        Iterator<String> iterator = List.of("hello", "cat").iterator();
+        String expect = "(\"hello\",\"cat\")";
+        assertEquals(expect, ValuePrinter.printValues(null, null, null, iterator));
+    }
 
     @Test
     public void prints_values() {
