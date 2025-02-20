@@ -173,73 +173,37 @@ abstract class ModuleHandler {
             if (!needsExport && !needsRead) {
                 return;
             }
+            ensureNotBootstrapLoader(source, target, needsExport, needsRead);
             ClassLoader classLoader = source.getClassLoader();
-            if (classLoader == null) {
-                throw new MockitoException(
-                        join(
-                                "Cannot adjust module graph for modules in the bootstrap loader",
-                                "",
-                                source
-                                        + " is declared by the bootstrap loader and cannot be adjusted",
-                                "Requires package export to " + target + ": " + needsExport,
-                                "Requires adjusted reading of " + target + ": " + needsRead));
-            }
             boolean targetVisible = classLoader == target.getClassLoader();
+            // Try to match the target classLoader to parent class loaders of the target.
             while (!targetVisible && classLoader != null) {
                 classLoader = classLoader.getParent();
                 targetVisible = classLoader == target.getClassLoader();
             }
             MethodCall targetLookup;
             Implementation.Composable implementation;
+            // If parent classLoader matches or the source loader.
             if (targetVisible) {
                 targetLookup =
                         MethodCall.invoke(getModule)
                                 .onMethodCall(MethodCall.invoke(forName).with(target.getName()));
                 implementation = StubMethod.INSTANCE;
-            } else {
-                Class<?> intermediate;
+            }
+            // Did not find a matching class loader try to create carrier.
+            else {
+                Class<?> intermediate = generateCarrier(source, target);
                 Field field;
-                try {
-                    intermediate =
-                            byteBuddy
-                                    .subclass(
-                                            Object.class,
-                                            ConstructorStrategy.Default.NO_CONSTRUCTORS)
-                                    .name(
-                                            String.format(
-                                                    "%s$%s%s",
-                                                    "org.mockito.codegen.MockitoTypeCarrier",
-                                                    RandomString.hashOf(
-                                                            source.getName().hashCode()),
-                                                    RandomString.hashOf(
-                                                            target.getName().hashCode())))
-                                    .defineField(
-                                            "mockitoType",
-                                            Class.class,
-                                            Visibility.PUBLIC,
-                                            Ownership.STATIC)
-                                    .make()
-                                    .load(
-                                            source.getClassLoader(),
-                                            loader.resolveStrategy(
-                                                    source, source.getClassLoader(), false))
-                                    .getLoaded();
+                try{
                     field = intermediate.getField("mockitoType");
                     field.set(null, target);
-                } catch (Exception e) {
-                    throw new MockitoException(
-                            join(
-                                    "Could not create a carrier for making the Mockito type visible to "
-                                            + source,
-                                    "",
-                                    "This is required to adjust the module graph to enable mock creation"),
-                            e);
+                }catch(Exception e){
+                    throw new MockitoException("Failed to get field from created carrier class");
                 }
                 targetLookup = MethodCall.invoke(getModule).onField(field);
-                implementation =
-                        MethodCall.invoke(getModule)
-                                .onMethodCall(
-                                        MethodCall.invoke(forName).with(intermediate.getName()));
+                implementation = MethodCall.invoke(getModule)
+                                                    .onMethodCall(
+                                                    MethodCall.invoke(forName).with(intermediate.getName()));
             }
             MethodCall sourceLookup =
                     MethodCall.invoke(getModule)
@@ -259,6 +223,76 @@ abstract class ModuleHandler {
                                         .onMethodCall(sourceLookup)
                                         .withMethodCall(targetLookup));
             }
+            // Create mock class to ensure read and export rights.
+            generateMockClass(source, target, implementation);
+        }
+
+        private static Object invoke(Method method, Object target, Object... args) {
+            try {
+                return method.invoke(target, args);
+            } catch (Exception e) {
+                throw new MockitoException(
+                        join(
+                                "Could not invoke " + method + " using reflection",
+                                "",
+                                "Mockito attempted to interact with the Java module system but an unexpected method behavior was encountered"),
+                        e);
+            }
+        }
+        private void ensureNotBootstrapLoader(Class<?> source, Class<?> target, boolean needsExport, boolean needsRead){
+                ClassLoader classLoader = source.getClassLoader();
+                if (classLoader == null) {
+                    throw new MockitoException(
+                            join(
+                                    "Cannot adjust module graph for modules in the bootstrap loader",
+                                    "",
+                                    source
+                                            + " is declared by the bootstrap loader and cannot be adjusted",
+                                    "Requires package export to " + target + ": " + needsExport,
+                                    "Requires adjusted reading of " + target + ": " + needsRead));
+                }
+        }
+
+        private Class<?> generateCarrier(Class<?> source, Class<?> target){
+            Class<?> carrierClass;
+            try {
+                carrierClass =
+                        byteBuddy
+                                .subclass(
+                                        Object.class,
+                                        ConstructorStrategy.Default.NO_CONSTRUCTORS)
+                                .name(
+                                        String.format(
+                                                "%s$%s%s",
+                                                "org.mockito.codegen.MockitoTypeCarrier",
+                                                RandomString.hashOf(
+                                                        source.getName().hashCode()),
+                                                RandomString.hashOf(
+                                                        target.getName().hashCode())))
+                                .defineField(
+                                        "mockitoType",
+                                        Class.class,
+                                        Visibility.PUBLIC,
+                                        Ownership.STATIC)
+                                .make()
+                                .load(
+                                        source.getClassLoader(),
+                                        loader.resolveStrategy(
+                                                source, source.getClassLoader(), false))
+                                .getLoaded();
+            // Failed to create static carrier class.
+            } catch (Exception e) {
+                throw new MockitoException(
+                        join(
+                                "Could not create a carrier for making the Mockito type visible to "
+                                        + source,
+                                "",
+                                "This is required to adjust the module graph to enable mock creation"),
+                        e);
+            }
+            return carrierClass;
+        }
+        private void generateMockClass(Class<?> source, Class<?> target, Implementation.Composable implementation){
             try {
                 Class.forName(
                         byteBuddy
@@ -287,19 +321,6 @@ abstract class ModuleHandler {
                                 "Could not force module adjustment of the module of " + source,
                                 "",
                                 "This is required to adjust the module graph to enable mock creation"),
-                        e);
-            }
-        }
-
-        private static Object invoke(Method method, Object target, Object... args) {
-            try {
-                return method.invoke(target, args);
-            } catch (Exception e) {
-                throw new MockitoException(
-                        join(
-                                "Could not invoke " + method + " using reflection",
-                                "",
-                                "Mockito attempted to interact with the Java module system but an unexpected method behavior was encountered"),
                         e);
             }
         }
