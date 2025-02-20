@@ -174,17 +174,10 @@ abstract class ModuleHandler {
                 return;
             }
             ensureNotBootstrapLoader(source, target, needsExport, needsRead);
-            ClassLoader classLoader = source.getClassLoader();
-            boolean targetVisible = classLoader == target.getClassLoader();
-            // Try to match the target classLoader to parent class loaders of the target.
-            while (!targetVisible && classLoader != null) {
-                classLoader = classLoader.getParent();
-                targetVisible = classLoader == target.getClassLoader();
-            }
             MethodCall targetLookup;
             Implementation.Composable implementation;
             // If parent classLoader matches or the source loader.
-            if (targetVisible) {
+            if (isTargetVisible(source, target)) {
                 targetLookup =
                         MethodCall.invoke(getModule)
                                 .onMethodCall(MethodCall.invoke(forName).with(target.getName()));
@@ -205,24 +198,8 @@ abstract class ModuleHandler {
                                                     .onMethodCall(
                                                     MethodCall.invoke(forName).with(intermediate.getName()));
             }
-            MethodCall sourceLookup =
-                    MethodCall.invoke(getModule)
-                            .onMethodCall(MethodCall.invoke(forName).with(source.getName()));
-            if (needsExport) {
-                implementation =
-                        implementation.andThen(
-                                MethodCall.invoke(addExports)
-                                        .onMethodCall(sourceLookup)
-                                        .with(target.getPackage().getName())
-                                        .withMethodCall(targetLookup));
-            }
-            if (needsRead) {
-                implementation =
-                        implementation.andThen(
-                                MethodCall.invoke(addReads)
-                                        .onMethodCall(sourceLookup)
-                                        .withMethodCall(targetLookup));
-            }
+            // Add read and export rights to implementation instructions if needed.
+            implementation = addExportandRead(source, target, needsExport, needsRead, implementation, targetLookup);
             // Create mock class to ensure read and export rights.
             generateMockClass(source, target, implementation);
         }
@@ -323,6 +300,39 @@ abstract class ModuleHandler {
                                 "This is required to adjust the module graph to enable mock creation"),
                         e);
             }
+        }
+
+        private boolean isTargetVisible(Class<?> source, Class<?> target){
+            ClassLoader classLoader = source.getClassLoader();
+            ClassLoader targetClassLoader = target.getClassLoader();
+            boolean targetVisible = (classLoader == targetClassLoader);
+            while(!targetVisible && classLoader != null){
+                classLoader = classLoader.getParent();
+                targetVisible = (classLoader == targetClassLoader);
+            }
+            return targetVisible;
+        }
+
+        private Implementation.Composable addExportandRead(Class<?> source, Class<?> target, boolean needsExport, boolean needsRead, Implementation.Composable implementation, MethodCall targetLookup){
+            MethodCall sourceLookup =
+                    MethodCall.invoke(getModule)
+                            .onMethodCall(MethodCall.invoke(forName).with(source.getName()));
+            if (needsExport) {
+                implementation =
+                        implementation.andThen(
+                                MethodCall.invoke(addExports)
+                                        .onMethodCall(sourceLookup)
+                                        .with(target.getPackage().getName())
+                                        .withMethodCall(targetLookup));
+            }
+            if (needsRead) {
+                implementation =
+                        implementation.andThen(
+                                MethodCall.invoke(addReads)
+                                        .onMethodCall(sourceLookup)
+                                        .withMethodCall(targetLookup));
+            }
+            return implementation;
         }
     }
 
