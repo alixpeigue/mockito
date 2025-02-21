@@ -726,7 +726,6 @@ This improved coverage from 72% to 80%, and added a template for adding more tes
  ![](guessPath_before.jpeg)
 - Report of new coverage: Branch coverage measured by JaCoCo **50%**  
   ![](guessPath_after.jpeg)
-  - percentages after the coverage
   ![](guesPath_coverage%.png)
 
 
