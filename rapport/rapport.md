@@ -804,14 +804,16 @@ public void testGuessPathValidApkButNonExistingDirectories() throws Exception {
 ```
 **5. `EqualsBuilder.append` method (Samer)**
 
-The branch coverage for the append method in EqualsBuilder was improved from 94% to 100%, as measured using JaCoCo. Initially, several branches were not covered handling BigDecimal comparisons .To address these gaps, additional test cases were introduced to ensure that all possible execution paths were exercised.
-  ![](Skärmbild%202025-02-21%20174412.png)
+The branch coverage for the append method in EqualsBuilder was improved from 94% to 100%, measured using JaCoCo. Initially, several branches were not covered handling BigDecimal comparisons. To address these gaps, additional test cases were introduced to ensure that all possible execution paths were exercised.
+![](Skärmbild%202025-02-21%20174412.png)
 ![](Skärmbild%202025-02-21%20174442.png)
+![](Skärmbild%202025-02-21%20135348.png)
+
 To increase coverage, new test cases were introduced:
 
-A test verified that numerically equal BigDecimal values (e.g., 10.0 and 10.00) were correctly identified as equal.
+- A test verified that numerically equal BigDecimal values (e.g., 10.0 and 10.00) were correctly identified as equal.
 
-Another ensured that comparing a BigDecimal to a non-BigDecimal type (e.g., BigDecimal vs Integer) correctly resulted in an unequal comparison.
+- Another test ensured that when comparing a BigDecimal to a non-BigDecimal type (e.g., BigDecimal vs Integer), the method correctly identified them as unequal by checking their types. 
 
 The following test cases were added to achieve these improvements:
 ```java
