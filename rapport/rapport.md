@@ -805,7 +805,12 @@ public void testGuessPathValidApkButNonExistingDirectories() throws Exception {
 **5. `EqualsBuilder.append` method (Samer)**
 
 The branch coverage for the append method in EqualsBuilder was improved from 94% to 100%, measured using JaCoCo. Initially, several branches were not covered handling BigDecimal comparisons. To address these gaps, additional test cases were introduced to ensure that all possible execution paths were exercised.
+
+Report of old coverage: Branch coverage measured by JaCoCo 94%
 ![](Skärmbild%202025-02-21%20174412.png)
+![](Skärmbild%202025-02-21%20140803.png)
+
+Report of new coverage: Branch coverage measured by JaCoCo 100%
 ![](Skärmbild%202025-02-21%20174442.png)
 ![](Skärmbild%202025-02-21%20135348.png)
 
