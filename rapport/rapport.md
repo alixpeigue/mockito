@@ -724,7 +724,7 @@ This improved coverage from 76% to 82%, and added a template for adding more tes
 
 **3.P+ `ValuePrinter.printValues()` (Leo)**
 - Leo also added unit tests for this to ensure P+ compliance. In total this should be 6 unit tests for Leo that improve branch coverage in total.
-  - Report of old coverage: Branch coverage measured by JaCoCo **84%**
+  - Report of old coverage: Branch coverage measured by JaCoCo **70%**
  ![](valuePrinterJacocoBefore.png)
 - Report of new coverage: Branch coverage measured by JaCoCo **100%**  
   ![](valuePrinterJacocoAfter.png)
