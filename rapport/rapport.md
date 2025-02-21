@@ -259,6 +259,7 @@ try {
 ```
 
 By moving these parts to their own methods the cyclomatic complexity of the adjustModuleGraph method was reduced from 15 to 8 which is a reduction of 47\%. 
+![Cyclomatic complexity after refactoring](after_refactor_adjustModuleGraph.png)
 ****  
 
 
@@ -586,7 +587,7 @@ This method tries to adjust the module graph of the class that is being mocked s
         }
 ```
 If we reach the else statement we create carrier that makes the class available to the source class when they are loaded from different class loaders. My tests cover the branches where the source class is loaded from the bootstrap and when the source and target classes are from different class loaders. My test cases test all 3 exceptions and one test that tests if the generated class exists after running `adjustModuleGraph` with correct parameters.
-```
+```java
     @Test
     public void generated_mockito_module_probe_class_is_loaded() throws ClassNotFoundException{
         // Ensure the creation of a ModuleSystemFound.
@@ -691,10 +692,11 @@ If we reach the else statement we create carrier that makes the class available 
             assertTrue(exception.getMessage().contains("Could not force module adjustment of the module of "));
     }
 ```
-Report of old coverage: Branch coverage measured by JaCoCo 28\% [link]
+Report of old coverage: Branch coverage measured by JaCoCo 28\% 
+![](before_tests_adjustModuleGraph.png)
 
-Report of new coverage: Branch coverage measured by JaCoco 89\% [link]
-
+Report of new coverage: Branch coverage measured by JaCoco 89\% 
+![](After_tests_adjustModuleGraph.png)
 Some of the code in the tests is reused because of the requirements needed to create an instance of the ModuleSystemFound class. I had issues with creating setup code before each test as it resulted in `NullPointerExceptions` which I did not manage to resolve. Therefore, some of the code is reused from test case to test case.
 
 
