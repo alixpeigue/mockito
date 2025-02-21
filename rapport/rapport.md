@@ -315,7 +315,7 @@ However, for the branches measured by our tool, it agrees with JaCoCo on whether
 
 For example, for method `SerializableMethod::equals`, out tool gives a list of unreached branches : `2, 4, 6, 7, 8, 11, 12, 13, 14, 16, 18, 19, 20, 21`. We can see on this JaCoCo report that all branches out tool have not been reached are in red
 
-\setkeys{Gin}{width=.8\linewidth}
+
 ![alt text](1739817751.png "JaCoCo report on the SerializableMethod::equals method")
 
 ## Coverage improvement
@@ -702,7 +702,6 @@ Some of the code in the tests is reused because of the requirements needed to cr
 Report of old coverage: Branch coverage measured by JaCoCo 72\% 
 
 
-%![alt text](1739817751.png "JaCoCo report on the %SerializableMethod::equals method")
 ![](matchesBefore.png)
 
 Report of new coverage: Branch coverage measured by JaCoco 80\% 
@@ -717,26 +716,12 @@ This method is an overriden one from a parent class Equals. This is meant to app
 The class had no tests at all so a test class had to be created. Then I wrote 5 new tests that covered the cases of the final fallthrough to false, case of boolean arrays and the case of actual and wanted null.
 
 ![](matchesTests.png)
-This improved coverage from 72\% to 80\%, and added a template for adding more testing to the ArrayEquals class through the new ArrayEqualsTest class.
-\begin{comment}
-2. ...
+This improved coverage from 72% to 80%, and added a template for adding more testing to the ArrayEquals class through the new ArrayEqualsTest class.
 
-Show the comments that describe the requirements for the coverage.
 
-Report of old coverage: [link]
-
-Report of new coverage: [link]
-
-Test cases added:
-
-git diff ...
-
-Number of test cases added: two per team member (P) or at least four (P+).
-\end{comment}
-
-**4. AndroidTempFileLocator.guessPath` (Anass) : \newline
-- Report of old coverage: Branch coverage measured by JaCoCo **0\%**  
-- Report of new coverage: Branch coverage measured by JaCoCo **50\%**  
+**4. AndroidTempFileLocator.guessPath` (Anass) :
+- Report of old coverage: Branch coverage measured by JaCoCo **0%**  
+- Report of new coverage: Branch coverage measured by JaCoCo **50%**  
 
 
 The `guessPath()` method processes APK paths, extracts package names, and determines writable cache directories. The function was previously missing tests for edge cases, including:
