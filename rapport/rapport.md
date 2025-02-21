@@ -794,6 +794,47 @@ public void testGuessPathValidApkButNonExistingDirectories() throws Exception {
     assertEquals("Expected no results when data directory does not exist or is not writable", 0, results.length);
 }
 ```
+**5. `EqualsBuilder.append` method (Samer)**
+
+The branch coverage for the append method in EqualsBuilder was improved from 94% to 100%, as measured using JaCoCo. Initially, several branches were not covered handling BigDecimal comparisons .To address these gaps, additional test cases were introduced to ensure that all possible execution paths were exercised.
+  ![](Skärmbild%202025-02-21%20174412.png)
+![](Skärmbild%202025-02-21%20174442.png)
+To increase coverage, new test cases were introduced:
+
+A test verified that numerically equal BigDecimal values (e.g., 10.0 and 10.00) were correctly identified as equal.
+
+Another ensured that comparing a BigDecimal to a non-BigDecimal type (e.g., BigDecimal vs Integer) correctly resulted in an unequal comparison.
+
+The following test cases were added to achieve these improvements:
+```java
+@Test
+public void testAppend_BigDecimalComparison() {
+    EqualsBuilder builder = new EqualsBuilder();
+
+    BigDecimal val1 = new BigDecimal("10.0");
+    BigDecimal val2 = new BigDecimal("10.0");
+    BigDecimal val3 = new BigDecimal("20.0");
+
+    // BigDecimal comparison should return true
+    builder.append(val1, val2);
+    assertTrue(builder.isEquals());
+
+    builder.setEquals(true); // Reset state
+    builder.append(val1, val3);
+    assertFalse(builder.isEquals());
+}
+
+@Test
+public void testAppend_BigDecimalComparison_LhsTrue_RhsFalse() {
+    EqualsBuilder builder = new EqualsBuilder();
+    BigDecimal lhs = new BigDecimal("1.0");
+    Integer rhs = 1; // Not an instance of BigDecimal
+
+    builder.append(lhs, rhs);
+    assertFalse(builder.isEquals());
+}
+```
+
 
 ## Self-assessment: Way of working
 
