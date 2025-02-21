@@ -77,6 +77,14 @@ Plan for refactoring complex code:
 - **Method `AndroidTempFileLocator.guessPath` (Anass)** There is unfortunately no good way to refactor this code.
 The `guessPath()` method relies on parsing file paths in a way that is tightly coupled to the specific structure of Android's /data/app/ directory. The logic for extracting the package name, handling dashes in APK filenames, and checking the writability of directories is all necessary to ensure correct behavior.
 
+- **Method `EqualsBuilder.append` (Samer)**
+While it is possible to reduce cyclomatic complexity and improve readability, certain elements, such as type checks, are difficult to eliminate entirely without compromising functionality. The need for instanceof checks to differentiate between primitive array types is an important part of the logic. This makes it challenging to fully remove these checks while preserving correctness.
+
+One way to simplify the method is by merging the first two if statements, reducing the CCN by 1. Since both conditions lead to the same outcome, they can be merged into a single if statement using a logical OR operator.
+
+We could also create a helper function for the if-else statements that handle primitive array types. This would further reduce the complexity of the additive method. However, this would mostly just move a large part of the logic to another method rather than really simplifying the approach. While that would lower the cyclomatic complexity of the append method, it wouldn't provide a meaningful reduction in the overall complexity of the class. Since the primitive array comparisons must still be handled explicitly. Given this, the extra method is unnecessary, as it does not significantly improve readability or maintainability.
+
+
 - **Method `ArrayEquals.matches` (Leo)**
 There is no reasonble way to refactor this function unfortunately. The need for instanceof in the code to check if the array elements are of a primitive type is not easy to work around, since one cannot bind types to variable values. The final case with Object presents an interesting idea though, since all arrays of primitive and non-primitive types inherit from the Object class, one might be able to skip the checks for the primitive element types of Arrays. Removing all the cases except for the null check and the  final parent Object[] results in a tests in MatchersTest.java failing, the failed tests pointing towards insufficient type information compared to what was expected. To refactor things to meaningfully reduce the cyclomatic complexity of ArrayEquals.matches would probably require compromising the functionality of mockito which isnt reasonable.
 insert image here of code
