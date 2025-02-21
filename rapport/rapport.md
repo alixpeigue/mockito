@@ -701,13 +701,15 @@ Some of the code in the tests is reused because of the requirements needed to cr
 
 
 **3. `ArrayEquals.matches()` (Leo)**
-Report of old coverage: Branch coverage measured by JaCoCo 72\% 
+
+- Report of old coverage: Branch coverage measured by JaCoCo 76\% 
+
+![](arrayEqualsJacocoBefore.png)
 
 
+- Report of new coverage: Branch coverage measured by JaCoco 82\% 
+![](arrayEqualsJacocoAfter.png)
 ![](matchesBefore.png)
-
-Report of new coverage: Branch coverage measured by JaCoco 80\% 
-
 ![](matchesAfter.png)
 
 This method is an overriden one from a parent class Equals. This is meant to appply the Arrays.equals method to any primitive array types and finally to an object based one in case of a non-primitive type. 
@@ -718,10 +720,21 @@ This method is an overriden one from a parent class Equals. This is meant to app
 The class had no tests at all so a test class had to be created. Then I wrote 5 new tests that covered the cases of the final fallthrough to false, case of boolean arrays and the case of actual and wanted null.
 
 ![](matchesTests.png)
-This improved coverage from 72% to 80%, and added a template for adding more testing to the ArrayEquals class through the new ArrayEqualsTest class.
+This improved coverage from 76% to 82%, and added a template for adding more testing to the ArrayEquals class through the new ArrayEqualsTest class.
+
+**3.P+ `ValuePrinter.printValues()` (Leo)**
+- Leo also added unit tests for this to ensure P+ compliance. In total this should be 6 unit tests for Leo that improve branch coverage in total.
+  - Report of old coverage: Branch coverage measured by JaCoCo **84%**
+ ![](valuePrinterJacocoBefore.png)
+- Report of new coverage: Branch coverage measured by JaCoCo **100%**  
+  ![](valuePrinterJacocoAfter.png)
+
+  ![](valuePrintBefore.png)
+  ![](valuePrinterAfter.png)
+  ![](valuePrinterTestAfter.png)
 
 
-**4. AndroidTempFileLocator.guessPath` (Anass) :
+**4. AndroidTempFileLocator.guessPath` (Anass)** :
 - Report of old coverage: Branch coverage measured by JaCoCo **0%**
  ![](guessPath_before.jpeg)
 - Report of new coverage: Branch coverage measured by JaCoCo **50%**  
