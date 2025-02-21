@@ -732,6 +732,7 @@ This improved coverage from 76% to 82%, and added a template for adding more tes
   ![](valuePrintBefore.png)
   ![](valuePrinterAfter.png)
   ![](valuePrinterTestAfter.png)
+- As can be seen, the case for when there are null parameters was never tested, so my test made sure those branches are covered as well
 
 
 **4. AndroidTempFileLocator.guessPath` (Anass)** :
