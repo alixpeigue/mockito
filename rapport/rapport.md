@@ -701,7 +701,7 @@ Some of the code in the tests is reused because of the requirements needed to cr
 **3. `ArrayEquals.matches()` (Leo)**
 Report of old coverage: Branch coverage measured by JaCoCo 72\% 
 
-%\setkeys{Gin}{width=.8\linewidth}
+
 %![alt text](1739817751.png "JaCoCo report on the %SerializableMethod::equals method")
 ![](matchesBefore.png)
 
