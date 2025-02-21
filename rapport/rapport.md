@@ -2,6 +2,10 @@
 
 # Report for assignment 3
 
+## Grading
+
+Adam, Alix and Leo are aiming for P+, see their "Assignment #3, extra coverage" submissions for the details.
+Samer and Anass are aiming for P.
 
 ## Project
 
@@ -148,7 +152,7 @@ The first part that could be moved is where the source classLoader is checked. T
 
 **Source classloader or any of its parents matches the target classloader**
 
-```
+```java
 boolean targetVisible = classLoader == target.getClassLoader();
             while (!targetVisible && classLoader != null) {
                 classLoader = classLoader.getParent();
@@ -158,7 +162,7 @@ boolean targetVisible = classLoader == target.getClassLoader();
 
 **Generate carrier field in mock class**
 
-```
+```java
 else {
                 Class<?> intermediate;
                 Field field;
@@ -202,7 +206,7 @@ else {
 
 **Add read and export rights for target class to mock class.**
 
-```
+```java
 MethodCall sourceLookup =
                     MethodCall.invoke(getModule)
                             .onMethodCall(MethodCall.invoke(forName).with(source.getName()));
@@ -225,7 +229,7 @@ MethodCall sourceLookup =
 
 **Generate Mock class**
 
-```
+```java
 try {
                 Class.forName(
                         byteBuddy
@@ -260,13 +264,7 @@ try {
 
 By moving these parts to their own methods the cyclomatic complexity of the adjustModuleGraph method was reduced from 15 to 8 which is a reduction of 47\%. 
 ![Cyclomatic complexity after refactoring](after_refactor_adjustModuleGraph.png)
-****  
 
-
-
-Carried out refactoring (optional, P+):
-
-git diff ...
 
 ## Coverage
 
@@ -402,11 +400,13 @@ index f00737148..f9d0899fb 100644
 
 ```
 
-Report of old coverage: Branch coverage measured by JaCoCo is of 46\%
-[link]
+Report of old coverage: Branch coverage measured by JaCoCo is of 46%
+
+![](serializableMethodBefore.png)
 
 Report of new coverage: Branch coverage measured by JaCoCo is of 61\%
-[link]
+
+![](serializableMethodAfter.png)
 
 Note that due to unreachable branches in the original code as explained in the requirements comments, coverage is still low but cannot be improved further.
 
@@ -455,7 +455,7 @@ index bbf7eb989..ed46742fa 100644
 **2. `ModuleHandler.ModuleSystemFound.adjustModuleGraph` (Adam)**
 
 This method tries to adjust the module graph of the class that is being mocked so that the module where the mock is created can access the class's methods. In the current version, the branch coverage is at 28\%. Due to the complexity of the class, it was very challenging to write tests.  
-```
+```java
 @Override
         void adjustModuleGraph(Class<?> source, Class<?> target, boolean export, boolean read) {
             // If the class is not exported or can not be read we return. 
