@@ -722,8 +722,11 @@ This improved coverage from 72% to 80%, and added a template for adding more tes
 
 
 **4. AndroidTempFileLocator.guessPath` (Anass) :
-- Report of old coverage: Branch coverage measured by JaCoCo **0%**  
+- Report of old coverage: Branch coverage measured by JaCoCo **0%**
+ ![](guessPath_before.jpeg)
 - Report of new coverage: Branch coverage measured by JaCoCo **50%**  
+  ![](guessPath_after.jpeg)
+
 
 
 The `guessPath()` method processes APK paths, extracts package names, and determines writable cache directories. The function was previously missing tests for edge cases, including:
